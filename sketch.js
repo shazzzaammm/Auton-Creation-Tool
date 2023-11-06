@@ -122,6 +122,9 @@ function keyPressed(){
     if(key == "Delete"){
         deletePoint();
     }
+    if (key == "c"){
+        navigator.clipboard.writeText(outputText.innerText);
+    }
 }
 
 function calculateAngleBetweenPoints(x1, y1, x2, y2) {
