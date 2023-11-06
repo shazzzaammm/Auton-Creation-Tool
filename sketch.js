@@ -42,7 +42,7 @@ function drawPoints(){
         ellipse(mapToImage(pos.x), mapToImage(pos.y), circleSize);
         if (i > 0) {
             stroke(255, 0, 100);
-            strokeWeight(width/150);
+            strokeWeight(width / 150);
             line(mapToImage(pos.x), mapToImage(pos.y), mapToImage(positions[i - 1].x), mapToImage(positions[i - 1].y));
         }
     }
@@ -50,7 +50,12 @@ function drawPoints(){
 
 function addPoint(x, y){
     positions.push(createVector(mapToField(x), mapToField(y)));
-    selectedPoint = positions[positions.length-1];
+    selectedPoint = positions[positions.length - 1];
+}
+
+function deletePoint(){
+    positions.splice(positions.indexOf(selectedPoint), 1);
+    selectedPoint = null;
 }
 
 function checkPointExists(x, y){
@@ -75,8 +80,8 @@ function mapToField(val){
 }
 
 function mousePressedAddMode(){
-    if(mouseX<=width && mouseX >= 0&& mouseY <= height && mouseY >= 0){
-        addPoint(mouseX,mouseY);
+    if(mouseX <= width && mouseX >= 0 && mouseY <= height && mouseY >= 0){
+        addPoint(mouseX, mouseY);
     }
 }
 
@@ -88,10 +93,10 @@ function mousePressedEditMode(){
 }
 
 function mousePressed() {
-    if(state==ADD_MODE){
+    if(state == ADD_MODE){
         mousePressedAddMode();
     } 
-    else if (state==EDIT_MODE){
+    else if (state == EDIT_MODE){
         mousePressedEditMode();
     } 
 }
@@ -102,7 +107,7 @@ function mouseDraggedEditMode(){
 }
 
 function mouseDragged(){
-    if(state==EDIT_MODE){
+    if(state == EDIT_MODE){
         mouseDraggedEditMode();
     }
 }
@@ -111,8 +116,11 @@ function keyPressed(){
     if(key == "e"){
         state = EDIT_MODE;
     }
-    if (key=="a"){
+    if (key == "a"){
         state = ADD_MODE;
+    }
+    if(key == "Delete"){
+        deletePoint();
     }
 }
 
