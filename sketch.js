@@ -43,12 +43,6 @@ function mousePressed() {
     }
 }
 
-function keyPressed(){
-    if (key==" "){
-        getAutonCode();
-    }
-}
-
 function calculateAngleBetweenPoints(x1, y1, x2, y2) {
     // Calculate the angle in radians
     const deltaX = x2 - x1;
