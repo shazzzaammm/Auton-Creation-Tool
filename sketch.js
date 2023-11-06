@@ -30,10 +30,10 @@ function draw() {
 }
 
 function mapToImage(val){
-    return map(val, 0, 144, 0, width);
+    return map(val, 0, 288, 0, width);
 }
 function mapToField(val){
-    return map(val, 0, width, 0, 144);
+    return map(val, 0, width, 0, 288);
 }
 
 function mousePressed() {
