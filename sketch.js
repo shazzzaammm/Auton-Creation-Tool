@@ -13,6 +13,10 @@ const EDIT_MODE = 1;
 const ANIMATION_MODE = 2;
 let state = ADD_MODE;
 
+let showLines = true;
+let showDots = true;
+let showRobot = false;
+
 let selectedPoint = null;
 
 let robotPosition;
@@ -37,12 +41,18 @@ function setup() {
 function draw() {
     imageMode(CORNER);
     image(fieldImage, 0, 0, width, height);
-    drawLines();
-    drawPoints();
 
+    if(showLines){
+        drawLines();
+    }
+    if(showDots){
+        drawPoints();
+    }
+    if(showRobot || state == ANIMATION_MODE){
+        drawRobot();
+    }
     if(state == ANIMATION_MODE){
         moveRobot();
-        drawRobot();
     }
     getAutonCode();
 }
@@ -172,6 +182,17 @@ function keyPressed() {
     if (key == "Delete" && state != ANIMATION_MODE) {
         deletePoint();
     }
+
+    if(key == "1"){
+        showDots = !showDots;
+    }
+    if(key == "2"){
+        showLines = !showLines;
+    }
+    if(key == "3"){
+        showRobot = !showRobot;
+    }
+
     if (key == "c") {
         copyAutonCode();
     }
