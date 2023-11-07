@@ -1,18 +1,23 @@
 let fieldImage;
+let chassisImage;
 let positions = [];
 const container = document.getElementById("container");
 const outputText = document.getElementById("output-text");
-let circleSize;
 
+let circleSize;
 const ADD_MODE = 0;
 const EDIT_MODE = 1;
+const ANIMATION_MODE = 2;
 let state = ADD_MODE;
 
 let selectedPoint = null;
+let robotPosition;
+let robotTargetIndex = 0;
 
 function setup() {
     createCanvas(min(window.innerHeight, window.innerWidth) / 1.5, min(window.innerHeight, window.innerWidth) / 1.5);
     fieldImage = loadImage("vex_field.png");
+    chassisImage = loadImage("chassis.png");
     container.append(canvas);
     outputText.style.width = `${width * 0.69}px`;
     outputText.style.maxHeight = `${height}px`;
@@ -21,9 +26,16 @@ function setup() {
 }
 
 function draw() {
+    imageMode(CORNER);
     image(fieldImage, 0, 0, width, height);
     drawLines();
     drawPoints();
+
+    if(state == ANIMATION_MODE){
+        moveRobot();
+        drawRobot();
+    }
+
     getAutonCode();
 }
 
@@ -62,9 +74,22 @@ function lineBetweenPoints(a, b) {
     line(mapToImage(a.x), mapToImage(a.y), mapToImage(b.x), mapToImage(b.y));
 }
 
+function drawRobot(){
+    pos1 = positions[robotTargetIndex];
+    pos2 = positions[robotTargetIndex - 1];
+    push();
+    imageMode(CENTER);
+    translate(mapToImage(robotPosition.x), mapToImage(robotPosition.y));
+    if(robotTargetIndex > 0)
+    rotate(radians(calculateAngleBetweenPoints(pos1.x, pos1.y, pos2.x, pos2.y)));
+    image(chassisImage, 0, 0, mapToImage(18 * 2.5), mapToImage(18 * 2.5));
+    pop()
+}
+
 function addPoint(x, y) {
     positions.push(createVector(mapToField(x), mapToField(y)));
     selectedPoint = positions[positions.length - 1];
+    robotPosition = positions[0].copy();
 }
 
 function deletePoint() {
@@ -134,12 +159,24 @@ function keyPressed() {
     if (key == "a") {
         state = ADD_MODE;
     }
-    if (key == "Delete") {
+    if (key == " ") {
+        state = ANIMATION_MODE;
+        robotTargetIndex = 0;
+    }
+    if (key == "Delete" && state != ANIMATION_MODE) {
         deletePoint();
     }
     if (key == "c") {
         copyAutonCode();
     }
+}
+
+function moveRobot(){
+    targetPos = positions[robotTargetIndex].copy();
+    if(p5.Vector.equals(targetPos, robotPosition) && robotTargetIndex + 1 < positions.length){
+        robotTargetIndex++;
+    }
+    robotPosition = robotPosition.add(targetPos.sub(robotPosition).limit(1.25));
 }
 
 function calculateAngleBetweenPoints(x1, y1, x2, y2) {
