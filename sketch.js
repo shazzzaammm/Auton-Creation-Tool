@@ -1,22 +1,28 @@
+let positions = [];
+
 let fieldImage;
 let chassisImage;
-let positions = [];
+
 const container = document.getElementById("container");
 const outputText = document.getElementById("output-text");
 
 let circleSize;
+
 const ADD_MODE = 0;
 const EDIT_MODE = 1;
 const ANIMATION_MODE = 2;
 let state = ADD_MODE;
 
 let selectedPoint = null;
+
 let robotPosition;
 let robotAngle = 0;
 let robotTargetIndex = 0;
+
 const ROBOT_DRIVING = 0;
 const ROBOT_TURNING = 1;
 let robotState = ROBOT_DRIVING;
+
 function setup() {
     createCanvas(min(window.innerHeight, window.innerWidth) / 1.5, min(window.innerHeight, window.innerWidth) / 1.5);
     fieldImage = loadImage("vex_field.png");
@@ -38,17 +44,7 @@ function draw() {
         moveRobot();
         drawRobot();
     }
-
     getAutonCode();
-}
-
-function drawPoints() {
-    if (positions.length <= 0) {
-        return;
-    }
-    for (let i = 0; i < positions.length; i++) {
-        drawPoint(positions[i]);
-    }
 }
 
 function drawPoint(p) {
@@ -62,6 +58,21 @@ function drawPoint(p) {
     ellipse(mapToImage(p.x), mapToImage(p.y), circleSize);
 }
 
+function lineBetweenPoints(a, b) {
+    stroke(255, 255, 0);
+    strokeWeight(width / 150);
+    line(mapToImage(a.x), mapToImage(a.y), mapToImage(b.x), mapToImage(b.y));
+}
+
+function drawPoints() {
+    if (positions.length <= 0) {
+        return;
+    }
+    for (let i = 0; i < positions.length; i++) {
+        drawPoint(positions[i]);
+    }
+}
+
 function drawLines() {
     if (positions.length <= 1) {
         return;
@@ -69,12 +80,6 @@ function drawLines() {
     for (let i = 1; i < positions.length; i++) {
         lineBetweenPoints(positions[i], positions[i - 1]);
     }
-}
-
-function lineBetweenPoints(a, b) {
-    stroke(255, 255, 0);
-    strokeWeight(width / 150);
-    line(mapToImage(a.x), mapToImage(a.y), mapToImage(b.x), mapToImage(b.y));
 }
 
 function drawRobot(){
@@ -121,57 +126,6 @@ function mapToField(val) {
     return map(val, 0, width, 0, 288);
 }
 
-function mousePressedAddMode() {
-    if (mouseX <= width && mouseX >= 0 && mouseY <= height && mouseY >= 0) {
-        addPoint(mouseX, mouseY);
-    }
-}
-
-function mousePressedEditMode() {
-    index = checkPointExists(mapToField(mouseX), mapToField(mouseY));
-    if (index !== false) {
-        selectedPoint = positions[index];
-    }
-}
-
-function mousePressed() {
-    if (state == ADD_MODE) {
-        mousePressedAddMode();
-    } else if (state == EDIT_MODE) {
-        mousePressedEditMode();
-    }
-}
-
-function mouseDraggedEditMode() {
-    selectedPoint.x = mapToField(mouseX);
-    selectedPoint.y = mapToField(mouseY);
-}
-
-function mouseDragged() {
-    if (state == EDIT_MODE) {
-        mouseDraggedEditMode();
-    }
-}
-
-function keyPressed() {
-    if (key == "e") {
-        state = EDIT_MODE;
-    }
-    if (key == "a") {
-        state = ADD_MODE;
-    }
-    if (key == " ") {
-        state = ANIMATION_MODE;
-        robotTargetIndex = 0;
-    }
-    if (key == "Delete" && state != ANIMATION_MODE) {
-        deletePoint();
-    }
-    if (key == "c") {
-        copyAutonCode();
-    }
-}
-
 function moveRobot(){
     if(robotState == ROBOT_DRIVING){
         targetPos = positions[robotTargetIndex].copy();
@@ -202,6 +156,57 @@ function calculateAngleBetweenPoints(x1, y1, x2, y2) {
     // Convert the angle from radians to degrees
     const angleDegrees = floor((angleRadians * 180) / Math.PI);
     return floor(angleDegrees - 90);
+}
+
+function keyPressed() {
+    if (key == "e") {
+        state = EDIT_MODE;
+    }
+    if (key == "a") {
+        state = ADD_MODE;
+    }
+    if (key == " ") {
+        state = ANIMATION_MODE;
+        robotTargetIndex = 0;
+    }
+    if (key == "Delete" && state != ANIMATION_MODE) {
+        deletePoint();
+    }
+    if (key == "c") {
+        copyAutonCode();
+    }
+}
+
+function mousePressedAddMode() {
+    if (mouseX <= width && mouseX >= 0 && mouseY <= height && mouseY >= 0) {
+        addPoint(mouseX, mouseY);
+    }
+}
+
+function mousePressedEditMode() {
+    index = checkPointExists(mapToField(mouseX), mapToField(mouseY));
+    if (index !== false) {
+        selectedPoint = positions[index];
+    }
+}
+
+function mousePressed() {
+    if (state == ADD_MODE) {
+        mousePressedAddMode();
+    } else if (state == EDIT_MODE) {
+        mousePressedEditMode();
+    }
+}
+
+function mouseDraggedEditMode() {
+    selectedPoint.x = mapToField(mouseX);
+    selectedPoint.y = mapToField(mouseY);
+}
+
+function mouseDragged() {
+    if (state == EDIT_MODE) {
+        mouseDraggedEditMode();
+    }
 }
 
 function getAutonCode() {
