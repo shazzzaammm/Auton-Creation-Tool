@@ -12,8 +12,11 @@ let state = ADD_MODE;
 
 let selectedPoint = null;
 let robotPosition;
+let robotAngle = 0;
 let robotTargetIndex = 0;
-
+const ROBOT_DRIVING = 0;
+const ROBOT_TURNING = 1;
+let robotState = ROBOT_DRIVING;
 function setup() {
     createCanvas(min(window.innerHeight, window.innerWidth) / 1.5, min(window.innerHeight, window.innerWidth) / 1.5);
     fieldImage = loadImage("vex_field.png");
@@ -75,13 +78,11 @@ function lineBetweenPoints(a, b) {
 }
 
 function drawRobot(){
-    pos1 = positions[robotTargetIndex];
-    pos2 = positions[robotTargetIndex - 1];
     push();
     imageMode(CENTER);
     translate(mapToImage(robotPosition.x), mapToImage(robotPosition.y));
     if(robotTargetIndex > 0)
-    rotate(radians(calculateAngleBetweenPoints(pos1.x, pos1.y, pos2.x, pos2.y)));
+    rotate(radians(robotAngle));
     image(chassisImage, 0, 0, mapToImage(18 * 2.5), mapToImage(18 * 2.5));
     pop()
 }
@@ -172,11 +173,24 @@ function keyPressed() {
 }
 
 function moveRobot(){
-    targetPos = positions[robotTargetIndex].copy();
-    if(p5.Vector.equals(targetPos, robotPosition) && robotTargetIndex + 1 < positions.length){
-        robotTargetIndex++;
+    if(robotState == ROBOT_DRIVING){
+        targetPos = positions[robotTargetIndex].copy();
+        if(p5.Vector.equals(targetPos, robotPosition) && robotTargetIndex + 1 < positions.length){
+            robotTargetIndex++;
+            robotState = ROBOT_TURNING;
+        }
+        robotPosition = robotPosition.add(targetPos.sub(robotPosition).limit(1.25));
     }
-    robotPosition = robotPosition.add(targetPos.sub(robotPosition).limit(1.25));
+    if(robotState == ROBOT_TURNING){
+        pos1 = positions[robotTargetIndex];
+        pos2 = positions[robotTargetIndex - 1];
+        targetAngle = calculateAngleBetweenPoints(pos1.x, pos1.y, pos2.x, pos2.y) 
+        robotAngle = lerp(robotAngle, targetAngle, .1);
+        if (targetAngle - 1 < robotAngle && robotAngle < targetAngle + 1){
+            robotState = ROBOT_DRIVING;
+            robotAngle = targetAngle;
+        }
+    }
 }
 
 function calculateAngleBetweenPoints(x1, y1, x2, y2) {
