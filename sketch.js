@@ -5,6 +5,7 @@ let chassisImage;
 
 const container = document.getElementById("container");
 const outputText = document.getElementById("output-text");
+const helpBox = document.getElementById("help-container");
 
 let circleSize;
 
@@ -16,6 +17,8 @@ let state = ADD_MODE;
 let showLines = true;
 let showDots = true;
 let showRobot = false;
+
+let showHelpBox = true;
 
 let selectedPoint = null;
 
@@ -181,7 +184,7 @@ function keyPressed() {
     if (key == "a") {
         state = ADD_MODE;
     }
-    if (key == " ") {
+    if (key == "w") {
         state = ANIMATION_MODE;
         robotTargetIndex = 0;
     }
@@ -190,6 +193,10 @@ function keyPressed() {
     }
     if(key=="x"){
         robotScale == 1 ? robotScale= 2.5 : robotScale = 1;
+    }
+    if(key == "h"){
+        showHelpBox = !showHelpBox;
+        showHelpBox ? helpBox.style.visibility = "visible" : helpBox.style.visibility = "hidden"; 
     }
 
     if(key == "1"){
