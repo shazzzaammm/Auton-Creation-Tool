@@ -22,6 +22,7 @@ let selectedPoint = null;
 let robotPosition;
 let robotAngle = 0;
 let robotTargetIndex = 0;
+let robotScale = 2.5;
 
 const ROBOT_DRIVING = 0;
 const ROBOT_TURNING = 1;
@@ -98,7 +99,7 @@ function drawRobot(){
     translate(mapToImage(robotPosition.x), mapToImage(robotPosition.y));
     if(robotTargetIndex > 0)
     rotate(radians(robotAngle));
-    image(chassisImage, 0, 0, mapToImage(18 * 2.5), mapToImage(18 * 2.5));
+    image(chassisImage, 0, 0, mapToImage(18 * robotScale), mapToImage(18 * robotScale));
     pop()
 }
 
@@ -184,8 +185,11 @@ function keyPressed() {
         state = ANIMATION_MODE;
         robotTargetIndex = 0;
     }
-    if (key == "delete" && state != ANIMATION_MODE) {
+    if (key == "d" && state != ANIMATION_MODE) {
         deletePoint();
+    }
+    if(key=="x"){
+        robotScale == 1 ? robotScale= 2.5 : robotScale = 1;
     }
 
     if(key == "1"){
