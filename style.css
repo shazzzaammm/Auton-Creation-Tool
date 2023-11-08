@@ -9,27 +9,43 @@ html, body {
 canvas{
   display: block;
 }
+*{
+  font-family: "Poppins";
+  font-weight: 800;
+}
 
-#container {
+.container{
   position: absolute;
-  display: inline-flex;
-  flex-direction: row-reverse;
-  width: 90%;
-  justify-content: space-evenly;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+#container {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  justify-content: space-evenly;
+  width: 90%;
+}
+
+#help-container{
+  order: 1;
+  background-color: #000000;
+  color: white;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 14pt;
+  visibility: visible;
+}
+
 #output-text{
   display: block;
   overflow-y: scroll;
   overflow-x: hidden;
   background-color: #ccc;
   text-overflow: clip;
-  font-family: "Poppins";
   font-size: 14pt;
   padding: 12px;
-  font-weight: 800;
   border-radius: 10px;
   border: #000 solid 4px;
 }
