@@ -103,8 +103,12 @@ function drawRobot(){
 }
 
 function addPoint(x, y) {
-    positions.push(createVector(mapToField(x), mapToField(y)));
-    selectedPoint = positions[positions.length - 1];
+    const point = createVector(mapToField(x), mapToField(y));
+    const index = positions.indexOf(selectedPoint);
+
+    positions.splice(index + 1, 0, point);
+
+    selectedPoint = point;
     robotPosition = positions[0].copy();
 }
 
@@ -169,6 +173,7 @@ function calculateAngleBetweenPoints(x1, y1, x2, y2) {
 }
 
 function keyPressed() {
+    key = key.toLocaleLowerCase();
     if (key == "e") {
         state = EDIT_MODE;
     }
@@ -179,7 +184,7 @@ function keyPressed() {
         state = ANIMATION_MODE;
         robotTargetIndex = 0;
     }
-    if (key == "Delete" && state != ANIMATION_MODE) {
+    if (key == "delete" && state != ANIMATION_MODE) {
         deletePoint();
     }
 
