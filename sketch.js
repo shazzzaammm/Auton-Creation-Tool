@@ -22,6 +22,8 @@ let showHelpBox = true;
 
 let selectedPoint = null;
 
+let spline = new Spline();
+
 let robotPosition;
 let robotAngle = 0;
 let robotTargetIndex = 0;
@@ -32,7 +34,10 @@ const ROBOT_TURNING = 1;
 let robotState = ROBOT_DRIVING;
 
 function setup() {
-    createCanvas(min(window.innerHeight, window.innerWidth) / 1.5, min(window.innerHeight, window.innerWidth) / 1.5);
+    createCanvas(
+        min(window.innerHeight, window.innerWidth) / 1.5,
+        min(window.innerHeight, window.innerWidth) / 1.5
+    );
     fieldImage = loadImage("vex_field.png");
     chassisImage = loadImage("chassis.png");
     container.append(canvas);
@@ -41,21 +46,25 @@ function setup() {
     circleSize = width / 60;
     ellipseMode(RADIUS);
 }
+function setLineDash(list) {
+    drawingContext.setLineDash(list);
+}
 
 function draw() {
     imageMode(CORNER);
     image(fieldImage, 0, 0, width, height);
-
-    if(showLines){
+    spline.draw();
+    positions = spline.getPoints();
+    if (showLines) {
         drawLines();
     }
-    if(showDots){
+    if (showDots) {
         drawPoints();
     }
-    if(showRobot || state == ANIMATION_MODE){
+    if (showRobot || state == ANIMATION_MODE) {
         drawRobot();
     }
-    if(state == ANIMATION_MODE){
+    if (state == ANIMATION_MODE) {
         moveRobot();
     }
     getAutonCode();
@@ -96,14 +105,19 @@ function drawLines() {
     }
 }
 
-function drawRobot(){
+function drawRobot() {
     push();
     imageMode(CENTER);
     translate(mapToImage(robotPosition.x), mapToImage(robotPosition.y));
-    if(robotTargetIndex > 0)
-    rotate(radians(robotAngle));
-    image(chassisImage, 0, 0, mapToImage(18 * robotScale), mapToImage(18 * robotScale));
-    pop()
+    if (robotTargetIndex > 0) rotate(radians(robotAngle));
+    image(
+        chassisImage,
+        0,
+        0,
+        mapToImage(18 * robotScale),
+        mapToImage(18 * robotScale)
+    );
+    pop();
 }
 
 function addPoint(x, y) {
@@ -144,21 +158,35 @@ function mapToField(val) {
     return map(val, 0, width, 0, 288);
 }
 
-function moveRobot(){
-    if(robotState == ROBOT_DRIVING){
-        targetPos = positions[robotTargetIndex].copy();
-        if(p5.Vector.equals(targetPos, robotPosition) && robotTargetIndex + 1 < positions.length){
+function moveRobot() {
+    if (robotState == ROBOT_DRIVING) {
+        // targetPos = positions[robotTargetIndex].copy();
+        targetPos = createVector(
+            positions[robotTargetIndex].x,
+            positions[robotTargetIndex].y
+        );
+        if (
+            p5.Vector.equals(targetPos, robotPosition) &&
+            robotTargetIndex + 1 < positions.length
+        ) {
             robotTargetIndex++;
             robotState = ROBOT_TURNING;
         }
-        robotPosition = robotPosition.add(targetPos.sub(robotPosition).limit(1.25));
+        robotPosition = robotPosition.add(
+            targetPos.sub(robotPosition).limit(1.25)
+        );
     }
-    if(robotState == ROBOT_TURNING){
+    if (robotState == ROBOT_TURNING) {
         pos1 = positions[robotTargetIndex];
         pos2 = positions[robotTargetIndex - 1];
-        targetAngle = calculateAngleBetweenPoints(pos1.x, pos1.y, pos2.x, pos2.y) 
-        robotAngle = lerp(robotAngle, targetAngle, .1);
-        if (targetAngle - 1 < robotAngle && robotAngle < targetAngle + 1){
+        targetAngle = calculateAngleBetweenPoints(
+            pos1.x,
+            pos1.y,
+            pos2.x,
+            pos2.y
+        );
+        robotAngle = lerp(robotAngle, targetAngle, 0.125);
+        if (targetAngle - 1 < robotAngle && robotAngle < targetAngle + 1) {
             robotState = ROBOT_DRIVING;
             robotAngle = targetAngle;
         }
@@ -191,21 +219,23 @@ function keyPressed() {
     if (key == "d" && state != ANIMATION_MODE) {
         deletePoint();
     }
-    if(key=="x"){
-        robotScale == 1 ? robotScale= 2.5 : robotScale = 1;
+    if (key == "x") {
+        robotScale == 1 ? (robotScale = 2.5) : (robotScale = 1);
     }
-    if(key == "h"){
+    if (key == "h") {
         showHelpBox = !showHelpBox;
-        showHelpBox ? helpBox.style.visibility = "visible" : helpBox.style.visibility = "hidden"; 
+        showHelpBox
+            ? (helpBox.style.visibility = "visible")
+            : (helpBox.style.visibility = "hidden");
     }
 
-    if(key == "1"){
+    if (key == "1") {
         showDots = !showDots;
     }
-    if(key == "2"){
+    if (key == "2") {
         showLines = !showLines;
     }
-    if(key == "3"){
+    if (key == "3") {
         showRobot = !showRobot;
     }
 
@@ -214,54 +244,79 @@ function keyPressed() {
     }
 }
 
-function mousePressedAddMode() {
-    if (mouseX <= width && mouseX >= 0 && mouseY <= height && mouseY >= 0) {
-        addPoint(mouseX, mouseY);
-    }
-}
-
-function mousePressedEditMode() {
-    index = checkPointExists(mapToField(mouseX), mapToField(mouseY));
-    if (index !== false) {
-        selectedPoint = positions[index];
-    }
-}
-
 function mousePressed() {
-    if (state == ADD_MODE) {
-        mousePressedAddMode();
-    } else if (state == EDIT_MODE) {
-        mousePressedEditMode();
+    if(mouseX <= width && mouseX >= 0 && mouseY <= height && mouseY >= 0){
+
+        selectedPoint = spline.findClickedPoint(mouseX, mouseY);
+        if (selectedPoint == null) {
+        spline.addCurve(mapToField(mouseX), mapToField(mouseY));
+    }
+    robotPosition = createVector(
+        spline.curves[0].point1.x,
+        spline.curves[0].point1.y
+        );
     }
 }
 
-function mouseDraggedEditMode() {
+function mouseDragged() {
+    if (selectedPoint == null) return;
     selectedPoint.x = mapToField(mouseX);
     selectedPoint.y = mapToField(mouseY);
 }
 
-function mouseDragged() {
-    if (state == EDIT_MODE) {
-        mouseDraggedEditMode();
-    }
+function mouseReleased(){
+    selectedPoint = null;
 }
+
+// function mousePressedAddMode() {
+//     if (mouseX <= width && mouseX >= 0 && mouseY <= height && mouseY >= 0) {
+//         addPoint(mouseX, mouseY);
+//     }
+// }
+
+// function mousePressedEditMode() {
+//     index = checkPointExists(mapToField(mouseX), mapToField(mouseY));
+//     if (index !== false) {
+//         selectedPoint = positions[index];
+//     }
+// }
+
+// function mousePressed() {
+//     if (state == ADD_MODE) {
+//         mousePressedAddMode();
+//     } else if (state == EDIT_MODE) {
+//         mousePressedEditMode();
+//     }
+// }
+
+// function mouseDraggedEditMode() {
+//     selectedPoint.x = mapToField(mouseX);
+//     selectedPoint.y = mapToField(mouseY);
+// }
+
+// function mouseDragged() {
+//     if (state == EDIT_MODE) {
+//         mouseDraggedEditMode();
+//     }
+// }
 
 function getAutonCode() {
     txt = "";
     for (let i = 1; i < positions.length; i++) {
-        const pos = positions[i];
+        const pos = createVector(positions[i].x, positions[i].y);
+        const pos2 = createVector(positions[i - 1].x, positions[i - 1].y);
         // yes this is ugly and no i wont change it :3
         txt += `chassis.set_turn_pid(${calculateAngleBetweenPoints(
             pos.x,
             pos.y,
-            positions[i - 1].x,
-            positions[i - 1].y
+            pos2.x,
+            pos2.y
         )}, TURN_SPEED);\nchassis.wait_drive();\nchassis.set_drive_pid(${floor(
-            p5.Vector.dist(pos, positions[i - 1])
+            p5.Vector.dist(pos, pos2)
         )}, DRIVE_SPEED);\nchassis.wait_drive();\n\n`;
     }
-    if(txt == ""){
-        txt = "Click to add some points :D"
+    if (txt == "") {
+        txt = "Click to add some points :D";
     }
     outputText.innerText = txt;
 }
