@@ -39,6 +39,7 @@ const ROBOT_DRIVING = 0;
 const ROBOT_TURNING = 1;
 let robotState = ROBOT_DRIVING;
 
+let startingOffset = 45;
 function setup() {
     createCanvas(min(window.innerHeight, window.innerWidth) / 1.5, min(window.innerHeight, window.innerWidth) / 1.5);
     fieldImage = loadImage("vex_field.png");
@@ -287,7 +288,7 @@ function getAutonCode() {
         const pos1 = positions[i];
         const pos2 = positions[i - 1];
         // yes this is ugly and no i wont change it :3
-        txt += `chassis.set_turn_pid(${calculateAngleBetweenPoints(pos1.x, pos1.y, pos2.x, pos2.y)}, TURN_SPEED);
+        txt += `chassis.set_turn_pid(${calculateAngleBetweenPoints(pos1.x, pos1.y, pos2.x, pos2.y)-startingOffset}, TURN_SPEED);
         chassis.wait_drive();
         chassis.set_drive_pid(${floor(p5.Vector.dist(pos1, pos2))}, DRIVE_SPEED);
         chassis.wait_drive();
