@@ -32,14 +32,14 @@ let selectedPoint = null;
 let robotPosition;
 let robotAngle = 0;
 let robotTargetIndex = 0;
-let robotScale = 2.5;
+let robotScale = 1.5;
 
 // Animation state machine
 const ROBOT_DRIVING = 0;
 const ROBOT_TURNING = 1;
 let robotState = ROBOT_DRIVING;
 
-let startingOffset = 45;
+let startingOffset = 0;
 function setup() {
     createCanvas(min(window.innerHeight, window.innerWidth) / 1.5, min(window.innerHeight, window.innerWidth) / 1.5);
     fieldImage = loadImage("vex_field.png");
@@ -156,11 +156,11 @@ function checkPointExists(x, y) {
 }
 
 function mapToImage(val) {
-    return map(val, 0, 288, 0, width);
+    return map(val, 0, 144, 0, width);
 }
 
 function mapToField(val) {
-    return map(val, 0, width, 0, 288);
+    return map(val, 0, width, 0, 144);
 }
 
 function moveRobot() {
@@ -224,7 +224,7 @@ function keyPressed() {
             break;
 
         case "x":
-            robotScale == 1 ? robotScale = 2.5 : robotScale = 1;
+            robotScale == 1 ? robotScale = 1.5 : robotScale = 1;
             break;
 
         case "h":
