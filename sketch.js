@@ -281,8 +281,8 @@ function mouseDragged() {
 }
 
 function mouseDraggedEdit() {
-  selectedPoint.x = mapToField(mouseX);
-  selectedPoint.y = mapToField(mouseY);
+  if (mouseX <= width && mouseX >= 0) selectedPoint.x = mapToField(mouseX);
+  if (mouseY <= height && mouseY >= 0) selectedPoint.y = mapToField(mouseY);
 }
 
 function mouseReleased() {
