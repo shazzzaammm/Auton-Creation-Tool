@@ -55,10 +55,7 @@ function setup() {
   circleSize = width / 60;
   ellipseMode(RADIUS);
 
-  robotPosition = createVector(
-    spline.curves[0].point1.x,
-    spline.curves[0].point1.y
-  );
+  robotPosition = createVector(spline.curves[0].point1.x, spline.curves[0].point1.y);
 }
 function setLineDash(list) {
   drawingContext.setLineDash(list);
@@ -125,13 +122,7 @@ function drawRobot() {
   imageMode(CENTER);
   translate(mapToImage(robotPosition.x), mapToImage(robotPosition.y));
   if (robotTargetIndex > 0) rotate(radians(robotAngle));
-  image(
-    chassisImage,
-    0,
-    0,
-    mapToImage(18 * robotScale),
-    mapToImage(18 * robotScale)
-  );
+  image(chassisImage, 0, 0, mapToImage(18 * robotScale), mapToImage(18 * robotScale));
   pop();
 }
 
@@ -183,14 +174,8 @@ function mapToField(val) {
 function moveRobot() {
   if (robotState == ROBOT_DRIVING) {
     // targetPos = positions[robotTargetIndex].copy();
-    targetPos = createVector(
-      positions[robotTargetIndex].x,
-      positions[robotTargetIndex].y
-    );
-    if (
-      p5.Vector.equals(targetPos, robotPosition) &&
-      robotTargetIndex + 1 < positions.length
-    ) {
+    targetPos = createVector(positions[robotTargetIndex].x, positions[robotTargetIndex].y);
+    if (p5.Vector.equals(targetPos, robotPosition) && robotTargetIndex + 1 < positions.length) {
       robotTargetIndex++;
       robotState = ROBOT_TURNING;
     }
@@ -243,13 +228,11 @@ function keyPressed() {
     }
   }
   if (key == "x") {
-    robotScale == 1 ? (robotScale = 2.5) : (robotScale = 1);
+    robotScale == 1 ? (robotScale = 1.5) : (robotScale = 1);
   }
   if (key == "h") {
     showHelpBox = !showHelpBox;
-    showHelpBox
-      ? (helpBox.style.visibility = "visible")
-      : (helpBox.style.visibility = "hidden");
+    showHelpBox ? (helpBox.style.visibility = "visible") : (helpBox.style.visibility = "hidden");
   }
   if (key == "1") {
     showDots = !showDots;
@@ -272,10 +255,7 @@ function mousePressed() {
   if (state === EDIT_MODE) mousePressedEdit();
   if (state === ANIMATION_MODE) return;
 
-  robotPosition = createVector(
-    spline.curves[0].point1.x,
-    spline.curves[0].point1.y
-  );
+  robotPosition = createVector(spline.curves[0].point1.x, spline.curves[0].point1.y);
 }
 
 function mousePressedEdit() {
@@ -308,19 +288,41 @@ function mouseReleased() {
 
 function getAutonCode() {
   let txt = "";
+  let previousAngle = 0;
   for (let i = 1; i < positions.length; i++) {
     const pos = createVector(positions[i].x, positions[i].y);
     const pos2 = createVector(positions[i - 1].x, positions[i - 1].y);
+    
     const turnAngle = calculateAngleBetweenPoints(pos.x, pos.y, pos2.x, pos2.y) - startingOffset;
     const driveDistance = floor(p5.Vector.dist(pos, pos2));
-    txt += `chassis.set_turn_pid(${turnAngle}, TURN_SPEED);\n`;
-    txt += `chassis.wait_drive();\n`;
-    txt += `chassis.set_drive_pid(${driveDistance}, DRIVE_SPEED);\n`
-    txt += `chassis.wait_drive();\n\n`;
+    
+    let turnWaitText;
+    let driveWaitText;
+
+    if (abs(turnAngle - previousAngle) > 15) {
+      turnWaitText = `chassis.wait_drive();\n`;
+    } else {
+      turnWaitText = `chassis.wait_until(${turnAngle * 0.9});\n`;
+    }
+
+    if (driveDistance > 10) {
+      driveWaitText = `chassis.wait_drive();\n`;
+    } else {
+      driveWaitText = `chassis.wait_until(${driveDistance * 0.9});\n`;
+    }
+
+    txt += `\nchassis.set_turn_pid(${turnAngle}, TURN_SPEED);\n`;
+    txt += turnWaitText;
+    txt += `chassis.set_drive_pid(${driveDistance}, DRIVE_SPEED);\n`;
+    txt += driveWaitText;
+
+    previousAngle = turnAngle;
   }
+
   if (txt == "") {
     txt = "Click to add some points :D";
   }
+  
   outputText.innerText = txt;
 }
 
