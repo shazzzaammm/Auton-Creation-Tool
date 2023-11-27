@@ -1,4 +1,4 @@
-// Dot array
+// Point array
 let positions = [];
 
 // Images
@@ -25,8 +25,10 @@ let showDots = true;
 let showRobot = false;
 let showHelpBox = true;
 
+// Main Spline (path)
 let spline = new Spline();
 
+// Selected Items
 let selectedPoint = null;
 let selectedCurve = spline.curves[0];
 
@@ -35,6 +37,7 @@ let robotPosition;
 let robotAngle = 0;
 let robotTargetIndex = 0;
 let robotScale = 1.5;
+let robotSpeed = 0.25;
 
 // Animation state machine
 const ROBOT_DRIVING = 0;
@@ -47,11 +50,15 @@ function setup() {
     min(window.innerHeight, window.innerWidth) / 1.5,
     min(window.innerHeight, window.innerWidth) / 1.5
   );
+
   fieldImage = loadImage("vex_field.png");
   chassisImage = loadImage("chassis.png");
+
   container.append(canvas);
+
   outputText.style.width = `${width * 0.69}px`;
   outputText.style.maxHeight = `${height}px`;
+
   circleSize = width / 60;
   ellipseMode(RADIUS);
 
@@ -169,14 +176,14 @@ function moveRobot() {
       robotTargetIndex++;
       robotState = ROBOT_TURNING;
     }
-    robotPosition = robotPosition.add(targetPos.sub(robotPosition).limit(1.25));
+    robotPosition = robotPosition.add(targetPos.sub(robotPosition).limit(robotSpeed * 5));
   }
 
   if (robotState == ROBOT_TURNING) {
     pos1 = positions[robotTargetIndex];
     pos2 = positions[robotTargetIndex - 1];
     targetAngle = calculateAngleBetweenPoints(pos1.x, pos1.y, pos2.x, pos2.y);
-    robotAngle = lerp(robotAngle, targetAngle, 0.125);
+    robotAngle = lerp(robotAngle, targetAngle, robotSpeed);
     if (targetAngle - 1 < robotAngle && robotAngle < targetAngle + 1) {
       robotState = ROBOT_DRIVING;
       robotAngle = targetAngle;
