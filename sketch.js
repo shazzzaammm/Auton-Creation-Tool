@@ -206,16 +206,7 @@ function calculateAngleBetweenPoints(x1, y1, x2, y2) {
 
 function keyPressed() {
   key = key.toLocaleLowerCase();
-  if (key == "e") {
-    state = EDIT_MODE;
-  }
-  if (key == "a") {
-    state = ADD_MODE;
-  }
-  if (key == "w") {
-    state = ANIMATION_MODE;
-    robotTargetIndex = 0;
-  }
+
   if (state != ANIMATION_MODE) {
     if (key == "d") {
       deleteCurve();
@@ -227,25 +218,37 @@ function keyPressed() {
       if (selectedCurve.dt * 2 <= 1) selectedCurve.dt *= 2;
     }
   }
-  if (key == "x") {
-    robotScale == 1 ? (robotScale = 1.5) : (robotScale = 1);
-  }
-  if (key == "h") {
-    showHelpBox = !showHelpBox;
-    showHelpBox ? (helpBox.style.visibility = "visible") : (helpBox.style.visibility = "hidden");
-  }
-  if (key == "1") {
-    showDots = !showDots;
-  }
-  if (key == "2") {
-    showLines = !showLines;
-  }
-  if (key == "3") {
-    showRobot = !showRobot;
-  }
 
-  if (key == "c") {
-    copyAutonCode();
+  switch (key) {
+    case "e":
+      state = EDIT_MODE;
+      break;
+    case "a":
+      state = ADD_MODE;
+      break;
+    case "w":
+      state = ANIMATION_MODE;
+      robotTargetIndex = 0;
+      break;
+    case "x":
+      robotScale == 1 ? (robotScale = 1.5) : (robotScale = 1);
+      break;
+    case "h":
+      showHelpBox = !showHelpBox;
+      showHelpBox ? (helpBox.style.visibility = "visible") : (helpBox.style.visibility = "hidden");
+      break;
+    case "c":
+      copyAutonCode();
+      break;
+    case "1":
+      showDots = !showDots;
+      break;
+    case "2":
+      showLines = !showLines;
+      break;
+    case "3":
+      showRobot = !showRobot;
+      break;
   }
 }
 
@@ -292,10 +295,10 @@ function getAutonCode() {
   for (let i = 1; i < positions.length; i++) {
     const pos = createVector(positions[i].x, positions[i].y);
     const pos2 = createVector(positions[i - 1].x, positions[i - 1].y);
-    
+
     const turnAngle = calculateAngleBetweenPoints(pos.x, pos.y, pos2.x, pos2.y) - startingOffset;
     const driveDistance = floor(p5.Vector.dist(pos, pos2));
-    
+
     let turnWaitText;
     let driveWaitText;
 
@@ -322,7 +325,7 @@ function getAutonCode() {
   if (txt == "") {
     txt = "Click to add some points :D";
   }
-  
+
   outputText.innerText = txt;
 }
 
