@@ -2,10 +2,10 @@ class Spline {
   constructor() {
     this.curves = [
       new BezierCurve(
-        new Point(208, 256),
-        new Point(230, 255),
-        new Point(211, 134),
-        new Point(184, 134),
+        new Point(104, 128),
+        new Point(100, 128),
+        new Point(104, 69),
+        new Point(97, 69),
         1
       ),
     ];
