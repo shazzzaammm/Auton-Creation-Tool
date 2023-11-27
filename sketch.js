@@ -173,11 +173,11 @@ function checkPointExists(x, y) {
 }
 
 function mapToImage(val) {
-  return map(val, 0, 288, 0, width);
+  return map(val, 0, 144, 0, width);
 }
 
 function mapToField(val) {
-  return map(val, 0, width, 0, 288);
+  return map(val, 0, width, 0, 144);
 }
 
 function moveRobot() {
@@ -307,19 +307,16 @@ function mouseReleased() {
 }
 
 function getAutonCode() {
-  txt = "";
+  let txt = "";
   for (let i = 1; i < positions.length; i++) {
     const pos = createVector(positions[i].x, positions[i].y);
     const pos2 = createVector(positions[i - 1].x, positions[i - 1].y);
-    // yes this is ugly and no i wont change it :3
-    txt += `chassis.set_turn_pid(${calculateAngleBetweenPoints(
-      pos.x,
-      pos.y,
-      pos2.x,
-      pos2.y
-    )}, TURN_SPEED);\nchassis.wait_drive();\nchassis.set_drive_pid(${floor(
-      p5.Vector.dist(pos, pos2)
-    )}, DRIVE_SPEED);\nchassis.wait_drive();\n\n`;
+    const turnAngle = calculateAngleBetweenPoints(pos.x, pos.y, pos2.x, pos2.y) - startingOffset;
+    const driveDistance = floor(p5.Vector.dist(pos, pos2));
+    txt += `chassis.set_turn_pid(${turnAngle}, TURN_SPEED);\n`;
+    txt += `chassis.wait_drive();\n`;
+    txt += `chassis.set_drive_pid(${driveDistance}, DRIVE_SPEED);\n`
+    txt += `chassis.wait_drive();\n\n`;
   }
   if (txt == "") {
     txt = "Click to add some points :D";

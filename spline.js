@@ -3,9 +3,9 @@ class Spline {
     this.curves = [
       new BezierCurve(
         new Point(104, 128),
-        new Point(100, 128),
+        new Point(141, 128),
         new Point(104, 69),
-        new Point(97, 69),
+        new Point(67, 69),
         1
       ),
     ];
