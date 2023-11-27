@@ -238,6 +238,9 @@ function keyPressed() {
     case "c":
       copyAutonCode();
       break;
+    case "r":
+      reset();  
+      break;
     case "1":
       showDots = !showDots;
       break;
@@ -329,4 +332,10 @@ function getAutonCode() {
 
 function copyAutonCode() {
   navigator.clipboard.writeText(outputText.innerText);
+}
+
+function reset(){
+  spline = new Spline();
+  robotTargetIndex = 0;
+  selectedCurve = spline.curves[0];
 }
