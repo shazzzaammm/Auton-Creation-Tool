@@ -1,3 +1,4 @@
+//#region Variable declarations
 // Point array
 let positions = [];
 
@@ -45,6 +46,8 @@ const ROBOT_TURNING = 1;
 let robotState = ROBOT_DRIVING;
 
 let startingOffset = 0;
+//#endregion
+
 function setup() {
   createCanvas(
     min(window.innerHeight, window.innerWidth) / 1.5,
@@ -64,6 +67,7 @@ function setup() {
 
   robotPosition = spline.curves[0].point1.getVector();
 }
+
 function setLineDash(list) {
   drawingContext.setLineDash(list);
 }
@@ -338,4 +342,5 @@ function reset(){
   spline = new Spline();
   robotTargetIndex = 0;
   selectedCurve = spline.curves[0];
+  robotPosition = spline.curves[0].point1.getVector();
 }

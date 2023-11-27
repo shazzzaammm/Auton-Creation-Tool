@@ -10,6 +10,7 @@ class Spline {
       ),
     ];
   }
+
   draw() {
     for (const curve of this.curves) {
       curve.draw();
@@ -60,7 +61,7 @@ class Spline {
 
     // removing duplicates (finally)
     for (let i = points.length - 1; i > 0; i--) {
-      if(points[i].equals(points[i - 1])){
+      if (points[i].equals(points[i - 1])) {
         points.splice(i, 1);
       }
     }
@@ -75,12 +76,14 @@ class Point {
     this.x = x;
     this.y = y;
   }
+
   draw() {
     textSize(this.w);
     textStyle(BOLD);
     textAlign(CENTER, CENTER);
     text("X", mapToImage(this.x), mapToImage(this.y));
   }
+
   isClicked(x, y) {
     return (
       x <= mapToImage(this.x) + this.w / 2 &&
@@ -97,7 +100,8 @@ class Point {
   equals(other) {
     return this.x == other.x && this.y == other.y;
   }
-  getVector(){
+
+  getVector() {
     return createVector(this.x, this.y);
   }
 }
@@ -143,7 +147,7 @@ class BezierCurve {
   }
 
   drawPoints() {
-    if (this.dt == 1) {
+    if (this.dt == 1 || !showDots) {
       return;
     }
     noStroke();
@@ -172,6 +176,7 @@ class BezierCurve {
   }
 
   drawHandles() {
+    if (!showDots) return;
     setLineDash([10, 10]);
     stroke(255, 0, 100);
     strokeWeight(2);
@@ -197,6 +202,7 @@ class BezierCurve {
     }
     return null;
   }
+  
   getPoints() {
     const points = [];
     for (let t = 0; t <= 1; t += this.dt) {
