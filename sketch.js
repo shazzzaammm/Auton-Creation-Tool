@@ -55,7 +55,7 @@ function setup() {
   circleSize = width / 60;
   ellipseMode(RADIUS);
 
-  robotPosition = createVector(spline.curves[0].point1.x, spline.curves[0].point1.y);
+  robotPosition = spline.curves[0].point1.getVector();
 }
 function setLineDash(list) {
   drawingContext.setLineDash(list);
@@ -126,16 +126,6 @@ function drawRobot() {
   pop();
 }
 
-function addPoint(x, y) {
-  const point = createVector(mapToField(x), mapToField(y));
-  const index = positions.indexOf(selectedPoint);
-
-  positions.splice(index + 1, 0, point);
-
-  selectedPoint = point;
-  robotPosition = positions[0].copy();
-}
-
 function deleteCurve() {
   let index = spline.curves.indexOf(selectedCurve);
   if (index > 0 && index < spline.curves.length - 1) {
@@ -173,14 +163,15 @@ function mapToField(val) {
 
 function moveRobot() {
   if (robotState == ROBOT_DRIVING) {
-    // targetPos = positions[robotTargetIndex].copy();
-    targetPos = createVector(positions[robotTargetIndex].x, positions[robotTargetIndex].y);
+    targetPos = positions[robotTargetIndex].getVector();
+
     if (p5.Vector.equals(targetPos, robotPosition) && robotTargetIndex + 1 < positions.length) {
       robotTargetIndex++;
       robotState = ROBOT_TURNING;
     }
     robotPosition = robotPosition.add(targetPos.sub(robotPosition).limit(1.25));
   }
+
   if (robotState == ROBOT_TURNING) {
     pos1 = positions[robotTargetIndex];
     pos2 = positions[robotTargetIndex - 1];
@@ -258,7 +249,7 @@ function mousePressed() {
   if (state === EDIT_MODE) mousePressedEdit();
   if (state === ANIMATION_MODE) return;
 
-  robotPosition = createVector(spline.curves[0].point1.x, spline.curves[0].point1.y);
+  robotPosition = spline.curves[0].point1.getVector();
 }
 
 function mousePressedEdit() {
@@ -293,8 +284,8 @@ function getAutonCode() {
   let txt = "";
   let previousAngle = 0;
   for (let i = 1; i < positions.length; i++) {
-    const pos = createVector(positions[i].x, positions[i].y);
-    const pos2 = createVector(positions[i - 1].x, positions[i - 1].y);
+    const pos = positions[i].getVector();
+    const pos2 = positions[i - 1].getVector();
 
     const turnAngle = calculateAngleBetweenPoints(pos.x, pos.y, pos2.x, pos2.y) - startingOffset;
     const driveDistance = floor(p5.Vector.dist(pos, pos2));

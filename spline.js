@@ -97,6 +97,9 @@ class Point {
   equals(other) {
     return this.x == other.x && this.y == other.y;
   }
+  getVector(){
+    return createVector(this.x, this.y);
+  }
 }
 
 class BezierCurve {
