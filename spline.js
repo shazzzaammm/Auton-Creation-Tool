@@ -19,14 +19,8 @@ class Spline {
   addCurve(x, y) {
     let startPoint = this.curves[this.curves.length - 1].point2;
     let endPoint = new Point(x, y);
-    let controlPoint1 = new Point(
-      (startPoint.x + endPoint.x) / 2,
-      (startPoint.y + endPoint.y) / 2
-    );
-    let controlPoint2 = new Point(
-      (startPoint.x + endPoint.x) / 2,
-      (startPoint.y + endPoint.y) / 2
-    );
+    let controlPoint1 = new Point((startPoint.x + endPoint.x) / 2, (startPoint.y + endPoint.y) / 2);
+    let controlPoint2 = new Point((startPoint.x + endPoint.x) / 2, (startPoint.y + endPoint.y) / 2);
     this.curves.push(
       new BezierCurve(
         startPoint,
@@ -64,7 +58,14 @@ class Spline {
       points = points.concat(curve.getPoints());
     }
 
-    return points.filter((item, index) => points.indexOf(item) == index);
+    // removing duplicates (finally)
+    for (let i = points.length - 1; i > 0; i--) {
+      if(points[i].equals(points[i - 1])){
+        points.splice(i, 1);
+      }
+    }
+
+    return points;
   }
 }
 
@@ -92,6 +93,10 @@ class Point {
   copy() {
     return new Point(this.x, this.y);
   }
+
+  equals(other) {
+    return this.x == other.x && this.y == other.y;
+  }
 }
 
 class BezierCurve {
@@ -118,10 +123,7 @@ class BezierCurve {
     if (k === 0 || k === n) {
       return 1;
     } else {
-      return (
-        this.binomialCoefficient(n - 1, k - 1) +
-        this.binomialCoefficient(n - 1, k)
-      );
+      return this.binomialCoefficient(n - 1, k - 1) + this.binomialCoefficient(n - 1, k);
     }
   }
 
@@ -130,10 +132,7 @@ class BezierCurve {
     let result = new Point(0, 0);
 
     for (let i = 0; i <= n; i++) {
-      const coefficient =
-        this.binomialCoefficient(n, i) *
-        Math.pow(1 - t, n - i) *
-        Math.pow(t, i);
+      const coefficient = this.binomialCoefficient(n, i) * Math.pow(1 - t, n - i) * Math.pow(t, i);
       result.x += coefficient * controlPoints[i].x;
       result.y += coefficient * controlPoints[i].y;
     }
