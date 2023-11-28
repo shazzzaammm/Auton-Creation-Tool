@@ -202,12 +202,36 @@ class BezierCurve {
     }
     return null;
   }
-  
+
   getPoints() {
     const points = [];
     for (let t = 0; t <= 1; t += this.dt) {
       points.push(this.bezierCurve(t, this.controlPoints));
     }
     return points;
+  }
+
+  movePoint(p, mx, my) {
+    if (p == this.control1 || p == this.control2) {
+      this.moveHandle(p, mx, my);
+    } else if (p == this.point1) {
+      this.moveEndPoint(p, this.control1, mx, my);
+    } else if (p == this.point2) {
+      this.moveEndPoint(p, this.control2, mx, my);
+    }
+  }
+
+  moveHandle(p, x, y) {
+    p.x = x;
+    p.y = y;
+  }
+
+  moveEndPoint(end, handle, x, y) {
+    const deltaX = x - end.x;
+    const deltaY = y - end.y;
+    end.x += deltaX;
+    end.y += deltaY;
+    handle.x += deltaX;
+    handle.y += deltaY;
   }
 }
