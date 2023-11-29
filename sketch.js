@@ -90,6 +90,7 @@ function draw() {
     moveRobot();
   }
   getAutonCode();
+  handleCursorStyle();
 }
 
 function drawPoint(p) {
@@ -206,6 +207,25 @@ function calculateAngleBetweenPoints(x1, y1, x2, y2) {
   return floor(angleDegrees - 90);
 }
 
+function handleCursorStyle() {
+  switch (state) {
+    case ADD_MODE:
+      canvas.style.cursor = "cell";
+      break;
+      
+      case EDIT_MODE:
+        canvas.style.cursor = "move";
+        break;
+        
+        case ANIMATION_MODE:
+      canvas.style.cursor = "no-drop";
+      break;
+
+    default:
+      break;
+  }
+}
+
 function keyPressed() {
   key = key.toLocaleLowerCase();
 
@@ -243,7 +263,7 @@ function keyPressed() {
       copyAutonCode();
       break;
     case "r":
-      reset();  
+      reset();
       break;
     case "1":
       showDots = !showDots;
@@ -337,7 +357,7 @@ function copyAutonCode() {
   navigator.clipboard.writeText(outputText.innerText);
 }
 
-function reset(){
+function reset() {
   spline = new Spline();
   robotTargetIndex = 0;
   selectedCurve = spline.curves[0];
