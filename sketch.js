@@ -212,12 +212,12 @@ function handleCursorStyle() {
     case ADD_MODE:
       canvas.style.cursor = "cell";
       break;
-      
-      case EDIT_MODE:
-        canvas.style.cursor = "move";
-        break;
-        
-        case ANIMATION_MODE:
+
+    case EDIT_MODE:
+      canvas.style.cursor = "move";
+      break;
+
+    case ANIMATION_MODE:
       canvas.style.cursor = "no-drop";
       break;
 
@@ -251,6 +251,7 @@ function keyPressed() {
     case "w":
       state = ANIMATION_MODE;
       robotTargetIndex = 0;
+      robotState = ROBOT_DRIVING;
       break;
     case "x":
       robotScale == 1 ? (robotScale = 1.5) : (robotScale = 1);
