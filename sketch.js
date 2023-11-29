@@ -307,7 +307,9 @@ function mouseDragged() {
 }
 
 function mouseDraggedEdit() {
-  selectedCurve.movePoint(selectedPoint, mapToField(mouseX), mapToField(mouseY));
+  if (mouseX <= width && mouseX >= 0 && mouseY <= height && mouseY >= 0){
+    selectedCurve.movePoint(selectedPoint, mapToField(mouseX), mapToField(mouseY));
+  }
 }
 
 function mouseReleased() {
