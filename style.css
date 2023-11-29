@@ -32,9 +32,9 @@ canvas{
   order: 1;
   background-color: #000000;
   color: white;
-  padding: 14px;
-  border-radius: 10px;
-  font-size: 1.075em;
+  padding: 1em;
+  border-radius: 5%;
+  font-size: 90%;
   visibility: visible;
 }
 
@@ -44,9 +44,9 @@ canvas{
   overflow-x: hidden;
   background-color: #ccc;
   text-overflow: clip;
-  font-size: 14pt;
-  padding: 12px;
-  border-radius: 10px;
+  font-size: 1em;
+  padding: .5em;
+  border-radius: 5%;
   border: #000 solid 4px;
 }
 
