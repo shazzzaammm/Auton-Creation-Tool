@@ -31,6 +31,7 @@ class Spline {
         this.curves[this.curves.length - 1].dt
       )
     );
+    this.curves[this.curves.length - 2].nextCurveHandle = controlPoint1;
   }
 
   findClickedPoint(x, y) {
@@ -114,6 +115,7 @@ class BezierCurve {
     this.control1 = control1;
     this.control2 = control2;
     this.controlPoints = [point1, control1, control2, point2];
+    this.nextCurveHandle = null;
   }
 
   draw() {
@@ -233,5 +235,9 @@ class BezierCurve {
     end.y += deltaY;
     handle.x += deltaX;
     handle.y += deltaY;
+    if (this.nextCurveHandle != null && end.equals(this.point2)) {
+      this.nextCurveHandle.x += deltaX;
+      this.nextCurveHandle.y += deltaY;
+    }
   }
 }
