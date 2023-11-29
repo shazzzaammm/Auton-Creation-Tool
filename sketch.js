@@ -196,12 +196,12 @@ function moveRobot() {
 }
 
 function calculateAngleBetweenPoints(x1, y1, x2, y2) {
-  // Calculate the angle in radians
+  // Calculate the angle
   const deltaX = x2 - x1;
   const deltaY = y2 - y1;
   const angleRadians = Math.atan2(deltaY, deltaX);
 
-  // Convert the angle from radians to degrees
+  // Convert the angle to degrees
   const angleDegrees = floor((angleRadians * 180) / Math.PI);
   return floor(angleDegrees - 90);
 }
@@ -286,8 +286,6 @@ function mouseDragged() {
 }
 
 function mouseDraggedEdit() {
-  // if (mouseX <= width && mouseX >= 0) selectedPoint.x = mapToField(mouseX);
-  // if (mouseY <= height && mouseY >= 0) selectedPoint.y = mapToField(mouseY);
   selectedCurve.movePoint(selectedPoint, mapToField(mouseX), mapToField(mouseY));
 }
 
