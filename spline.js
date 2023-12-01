@@ -87,10 +87,10 @@ class Point {
 
   isClicked(x, y) {
     return (
-      x <= mapToImage(this.x) + this.w / 2 &&
-      x >= mapToImage(this.x) - this.w / 2 &&
-      y <= mapToImage(this.y) + this.w / 2 &&
-      y >= mapToImage(this.y) - this.w / 2
+      x <= mapToImage(this.x) + this.w / 3 &&
+      x >= mapToImage(this.x) - this.w / 3 &&
+      y <= mapToImage(this.y) + this.w / 3 &&
+      y >= mapToImage(this.y) - this.w / 3
     );
   }
 

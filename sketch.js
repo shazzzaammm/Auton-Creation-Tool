@@ -98,7 +98,7 @@ function drawPoint(p) {
     noStroke();
   } else {
     stroke(255);
-    strokeWeight(width / 150);
+    strokeWeight(p.width);
   }
   fill(0, 70, 254);
   ellipse(mapToImage(p.x), mapToImage(p.y), circleSize);
@@ -187,7 +187,7 @@ function moveRobot() {
   if (robotState == ROBOT_TURNING) {
     pos1 = positions[robotTargetIndex];
     pos2 = positions[robotTargetIndex - 1];
-    targetAngle = calculateAngleBetweenPoints(pos1.x, pos1.y, pos2.x, pos2.y);
+    targetAngle = calculateAngleBetweenPoints(pos1, pos2);
     robotAngle = lerp(robotAngle, targetAngle, robotSpeed);
     if (targetAngle - 1 < robotAngle && robotAngle < targetAngle + 1) {
       robotState = ROBOT_DRIVING;
@@ -196,10 +196,10 @@ function moveRobot() {
   }
 }
 
-function calculateAngleBetweenPoints(x1, y1, x2, y2) {
+function calculateAngleBetweenPoints(a, b) {
   // Calculate the angle
-  const deltaX = x2 - x1;
-  const deltaY = y2 - y1;
+  const deltaX = b.x - a.x;
+  const deltaY = b.y - a.y;
   const angleRadians = Math.atan2(deltaY, deltaX);
 
   // Convert the angle to degrees
@@ -307,7 +307,7 @@ function mouseDragged() {
 }
 
 function mouseDraggedEdit() {
-  if (mouseX <= width && mouseX >= 0 && mouseY <= height && mouseY >= 0){
+  if (mouseX <= width && mouseX >= 0 && mouseY <= height && mouseY >= 0) {
     selectedCurve.movePoint(selectedPoint, mapToField(mouseX), mapToField(mouseY));
   }
 }
@@ -320,11 +320,11 @@ function getAutonCode() {
   let txt = "";
   let previousAngle = 0;
   for (let i = 1; i < positions.length; i++) {
-    const pos = positions[i].getVector();
+    const pos1 = positions[i].getVector();
     const pos2 = positions[i - 1].getVector();
 
-    const turnAngle = calculateAngleBetweenPoints(pos.x, pos.y, pos2.x, pos2.y) - startingOffset;
-    const driveDistance = floor(p5.Vector.dist(pos, pos2));
+    const turnAngle = calculateAngleBetweenPoints(pos1, pos2) - startingOffset;
+    const driveDistance = floor(p5.Vector.dist(pos1, pos2));
 
     let turnWaitText;
     let driveWaitText;
