@@ -356,13 +356,13 @@ function getAutonCode() {
     let turnWaitText;
     let driveWaitText;
 
-    if (abs(turnAngle - previousAngle) > 15) {
+    if (abs(turnAngle - previousAngle) > 2) {
       turnWaitText = `chassis.wait_drive();\n`;
     } else {
       turnWaitText = `chassis.wait_until(${turnAngle * 0.9});\n`;
     }
 
-    if (driveDistance > 10) {
+    if (driveDistance > 1) {
       driveWaitText = `chassis.wait_drive();\n`;
     } else {
       driveWaitText = `chassis.wait_until(${driveDistance * 0.9});\n`;
@@ -370,7 +370,7 @@ function getAutonCode() {
 
     txt += `\nchassis.set_turn_pid(${turnAngle}, TURN_SPEED);\n`;
     txt += turnWaitText;
-    txt += `chassis.set_drive_pid(${driveDistance}, DRIVE_SPEED);\n`;
+    txt += `chassis.set_drive_pid(map_inches_to_pid(${driveDistance}), DRIVE_SPEED);\n`;
     txt += driveWaitText;
 
     previousAngle = turnAngle;
