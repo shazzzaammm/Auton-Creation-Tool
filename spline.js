@@ -9,6 +9,7 @@ class Spline {
         1
       ),
     ];
+    this.curves[0].showHandles = true;
   }
 
   draw() {
@@ -116,6 +117,7 @@ class BezierCurve {
     this.control2 = control2;
     this.controlPoints = [point1, control1, control2, point2];
     this.nextCurveHandle = null;
+    this.showHandles = false;
   }
 
   draw() {
@@ -155,12 +157,13 @@ class BezierCurve {
     noStroke();
     for (let i = 0; i < this.controlPoints.length; i++) {
       const pt = this.controlPoints[i];
-      if (pt == this.control1 || pt == this.control2) {
+      if ((pt == this.control1 || pt == this.control2) && this.showHandles) {
         fill(255);
-      } else {
+        pt.draw();
+      } else if(this.showHandles){
         fill(128, 53, 90);
+        pt.draw();
       }
-      pt.draw();
     }
   }
 
@@ -178,7 +181,7 @@ class BezierCurve {
   }
 
   drawHandles() {
-    if (!showDots) return;
+    if (!showDots || !this.showHandles) return;
     setLineDash([10, 10]);
     stroke(255, 0, 100);
     strokeWeight(2);

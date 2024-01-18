@@ -252,6 +252,9 @@ function keyPressed() {
       state = ANIMATION_MODE;
       robotTargetIndex = 0;
       robotState = ROBOT_DRIVING;
+      if (selectedCurve) {
+        deSelectCurve();
+      }
       break;
     case "x":
       robotScale == 1 ? (robotScale = 1.5) : (robotScale = 1);
@@ -289,15 +292,33 @@ function mousePressed() {
 
 function mousePressedEdit() {
   if (mouseX <= width && mouseX >= 0 && mouseY <= height && mouseY >= 0) {
+    // clear current curves
+    if (selectedCurve) {
+      deSelectCurve();
+    }
+
+    // select a new curve
     selectedPoint = spline.findClickedPoint(mouseX, mouseY);
     selectedCurve = spline.findClickedCurve(mouseX, mouseY);
+
+    // show selected curves
+    if (selectedCurve) {
+      let i = spline.curves.indexOf(selectedCurve);
+      spline.curves[i].showHandles = true;
+      if (i > 0) spline.curves[i - 1].showHandles = true;
+      if (i < spline.curves.length - 2) spline.curves[i + 1].showHandles = true;
+    }
   }
 }
 
 function mousePressedAdd() {
   if (mouseX <= width && mouseX >= 0 && mouseY <= height && mouseY >= 0) {
+    if (selectedCurve) {
+      deSelectCurve();
+    }
     spline.addCurve(mapToField(mouseX), mapToField(mouseY));
     selectedCurve = spline.curves[spline.curves.length - 1];
+    selectedCurve.showHandles = true;
   }
 }
 
@@ -316,6 +337,12 @@ function mouseReleased() {
   selectedPoint = null;
 }
 
+function deSelectCurve() {
+  let i = spline.curves.indexOf(selectedCurve);
+  spline.curves[i].showHandles = false;
+  if (i > 0) spline.curves[i - 1].showHandles = false;
+  if (i < spline.curves.length - 2) spline.curves[i + 1].showHandles = false;
+}
 function getAutonCode() {
   let txt = "";
   let previousAngle = 0;
