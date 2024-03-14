@@ -61,6 +61,8 @@ function setup() {
 
   outputText.style.width = `${width * 0.69}px`;
   outputText.style.maxHeight = `${height}px`;
+  outputText.style.padding = `${width * 0.025}px`;
+  outputText.style.fontSize = `${width * 0.025}px`;
 
   circleSize = width / 60;
   ellipseMode(RADIUS);
@@ -343,6 +345,7 @@ function deSelectCurve() {
   if (i > 0) spline.curves[i - 1].showHandles = false;
   if (i < spline.curves.length - 2) spline.curves[i + 1].showHandles = false;
 }
+
 function getAutonCode() {
   let txt = "";
   let previousAngle = 0;
